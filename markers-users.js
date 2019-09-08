@@ -1,23 +1,3 @@
-var infrastructure = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-		    18.09439,
-                    59.31079
-                ]
-            },
-            "type": "Feature",
-            "properties": {
-                "user": "Triton",
-                "popupContent": "The mighty server"
-            },
-        }
-    ]
-};
-
 var users = {
     "type": "FeatureCollection",
     "features": [
@@ -47,6 +27,21 @@ var users = {
             "properties": {
 		"user": "you?",
                 "popupContent": "some text to make you more interesting…"
+            },
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+		    -59.0096,
+                    -3.2423
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+		"user": "Yacumama",
+                "popupContent": "Fear me, I can even define my own colour",
+		"color": "#8c6bb1"
             },
         }
     ]

@@ -11,7 +11,8 @@ var infrastructure = {
             },
             "type": "Feature",
             "properties": {
-                "popupContent": "Triton"
+                "user": "Triton",
+                "popupContent": "The mighty server"
             },
         }
     ]
@@ -30,7 +31,22 @@ var users = {
             },
             "type": "Feature",
             "properties": {
-                "popupContent": "pbnoxious"
+	        "user": "pbnoxious",
+                "popupContent": "You know where I live!"
+            },
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+		    -40.71366,
+                    32.87654
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+		"user": "you?",
+                "popupContent": "some text to make you more interesting…"
             },
         }
     ]

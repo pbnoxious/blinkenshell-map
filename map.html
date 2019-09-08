@@ -40,7 +40,7 @@
 
 
 	function onEachFeature(feature, layer) {
-		var popupContent = "<p>Here lives" + "</p>";
+		var popupContent = "<p>" + feature.properties.user + "</p>"
 
 		if (feature.properties && feature.properties.popupContent) {
 			popupContent += feature.properties.popupContent;

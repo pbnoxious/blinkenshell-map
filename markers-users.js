@@ -29,5 +29,20 @@ var users = {
         "user": "djm",
       },
     },
+    {
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.537158,
+          52.437497
+        ]
+      },
+      "type": "Feature",
+      "properties": {
+        "user": "Nistur",
+        "popupContent": "Just chilling in the park.",
+        "color": "#000000"
+      },
+    },
   ]
 };

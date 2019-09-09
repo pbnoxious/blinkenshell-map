@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import copy
 
 class Marker:
     """Stores the information of a user"""
@@ -34,7 +35,7 @@ def parse_user(user, filename):
     marker = Marker()
     marker.user = user
     marker.coords = check_coords(lines[0])
-    if (lines) >= 3:
+    if len(lines) >= 3:
         marker.color = lines[2]
     if len(lines) >= 2:
         marker.popup = lines[1]
@@ -49,6 +50,7 @@ def get_template():
 
 def change_template(marker, template):
     """Enter marker information into geojson template"""
+    fetch_new = False
     template[4] = f'          {marker.coords[1]},\n' # switch latlon to lonlat
     template[5] = f'          {marker.coords[0]}\n'  # because of geojson
     template[10] = f'        "user": "{marker.user}",\n'
@@ -56,11 +58,13 @@ def change_template(marker, template):
         template[12] = f'        "color": "{marker.color}"\n'
     else:
         del template[12]
+        fetch_new = True
     if marker.popup:
         template[11] = f'        "popupContent": "{marker.popup}",\n'
     else:
         del template[11]
-    return template
+        fetch_new = True
+    return (template, fetch_new)
 
 
 if __name__ == '__main__':
@@ -83,6 +87,7 @@ if __name__ == '__main__':
 
     all_user_templates = []
     all_user_templates.append(templateheader)
+    user_json = copy.deepcopy(template)
 
     for user in users:
         try:
@@ -93,11 +98,11 @@ if __name__ == '__main__':
         except ValueError:
             log.write(f"File of user {user} is not correct\n")
             continue
-        change_template(marker, template)
-        f.writelines(template)
+        user_json, fetch_new = change_template(marker, user_json)
+        f.writelines(user_json)
+        if fetch_new:
+            user_json = copy.deepcopy(template)
 
     f.writelines(templatefooter)
     f.close()
     log.close()
-
-    # later: use f.seek to only append the changed ones? how to search for the only changed ones?

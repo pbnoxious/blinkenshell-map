@@ -27,7 +27,9 @@ def check_coords(line):
 def parse_user(user, filename):
     """Reads file of user and returns Marker with info"""
     urlpattern = "http://" + user + ".blinkenshell.org/" + filename
-    lines = os.popen("curl -s http://pbnoxious.blinkenshell.org/coordinates").readlines()
+    lines = os.popen(f"curl -s {urlpattern}").readlines()
+    if lines[2] == "<title>404 Not Found</title>\n":
+        raise IOError
     lines = [line.strip() for line in lines if line]
     marker = Marker()
     marker.user = user
@@ -61,7 +63,7 @@ def change_template(marker, template):
 
 if __name__ == '__main__':
     # users = os.listdir("/home/")
-    users = ["pbnoxious"]
+    users = ["pbnoxious", "failfailfail"]
 
     templateheader = ['var users = {\n',
                       '  "type": "FeatureCollection",\n',
@@ -73,6 +75,7 @@ if __name__ == '__main__':
 
     template = get_template()
 
+    log = open('log_parse.txt', 'w')
     f = open('markers-users.js', 'w')
     f.writelines(templateheader)
 
@@ -82,16 +85,17 @@ if __name__ == '__main__':
     for user in users:
         try:
             marker = parse_user(user, "coordinates")
-        except PermissionError:
-            print(f"Wrong permissions for user {user}")
         except IOError:
-            print(f"File of user {user} not readable")
+            log.write(f"File of user {user} not found\n")
+            continue
         except ValueError:
-            pass
+            log.write(f"File of user {user} is not correct\n")
+            continue
         change_template(marker, template)
         f.writelines(template)
 
     f.writelines(templatefooter)
     f.close()
+    log.close()
 
     # later: use f.seek to only append the changed ones? how to search for the only changed ones?

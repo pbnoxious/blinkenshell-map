@@ -9,7 +9,7 @@ A small python script parses these from time to time and converts them into GeoJ
 These GeoJSON objects are then added as a Leaflet layer to an OpenStreetMap background with tiles from Mapbox.
 
 ## Structure of the coordinates file
-In principle just adding the Lat/Lon coordinates is sufficients, but there are additional options.
+In principle, just adding the Lat/Lon coordinates is sufficient but there are additional options.
 The file will be correctly parsed if it is structured as follows:
 ```
 lat.coordinates,lon.coordinates

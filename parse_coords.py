@@ -28,14 +28,16 @@ def parse_user(user, filename):
     """Reads file of user and returns Marker with info"""
     urlpattern = "http://" + user + ".blinkenshell.org/" + filename
     lines = os.popen(f"curl -s {urlpattern}").readlines()
-    if lines[2] == "<title>404 Not Found</title>\n":
+    if len(lines) == 7:
         raise IOError
     lines = [line.strip() for line in lines if line]
     marker = Marker()
     marker.user = user
     marker.coords = check_coords(lines[0])
-    marker.popup = lines[1]
-    marker.color = lines[2]
+    if (lines) >= 3:
+        marker.color = lines[2]
+    if len(lines) >= 2:
+        marker.popup = lines[1]
     return marker
 
 
@@ -63,7 +65,7 @@ def change_template(marker, template):
 
 if __name__ == '__main__':
     # users = os.listdir("/home/")
-    users = ["pbnoxious", "failfailfail"]
+    users = ["pbnoxious", "failfailfail", "djm", "Nistur"]
 
     templateheader = ['var users = {\n',
                       '  "type": "FeatureCollection",\n',

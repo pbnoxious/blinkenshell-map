@@ -18,13 +18,14 @@ def check_coords(line):
     if len(coords) != 2:
         raise ValueError("Must be 2 values for coordinates")
     if abs(coords[0] > 90):
-        raise ValueError("Latitude can't be larger than 120")
+        raise ValueError("Latitude can't be larger than 90")
     if abs(coords[1] > 180):
         raise ValueError("Longitude can't be larger than 180")
-    return coords 
+    return coords
 
 
 def parse_user(user, filename):
+    """Reads file of user and returns Marker with info"""
     urlpattern = "http://" + user + ".blinkenshell.org/" + filename
     lines = os.popen("curl -s http://pbnoxious.blinkenshell.org/coordinates").readlines()
     lines = [line.strip() for line in lines if line]
@@ -43,6 +44,7 @@ def get_template():
 
 
 def change_template(marker, template):
+    """Enter marker information into geojson template"""
     template[4] = f'          {marker.coords[1]},\n' # switch latlon to lonlat
     template[5] = f'          {marker.coords[0]}\n'  # because of geojson
     template[10] = f'        "user": "{marker.user}",\n'

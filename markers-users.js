@@ -16,5 +16,18 @@ var users = {
         "color": "#cc0000"
       },
     },
+    {
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.7600617,
+          52.436655
+        ]
+      },
+      "type": "Feature",
+      "properties": {
+        "user": "djm",
+      },
+    },
   ]
 };

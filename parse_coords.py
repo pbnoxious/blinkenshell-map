@@ -17,11 +17,11 @@ def check_coords(line):
     coords = [float(coord) for coord in coords]
     if len(coords) != 2:
         raise ValueError("Must be 2 values for coordinates")
-    if abs(coords[0] > 180):
-        raise ValueError("Longitude can't be larger than 180")
-    if abs(coords[1] > 90):
+    if abs(coords[0] > 90):
         raise ValueError("Latitude can't be larger than 120")
-    return coords # switch lonlat to latlon to make it user friendly?
+    if abs(coords[1] > 180):
+        raise ValueError("Longitude can't be larger than 180")
+    return coords 
 
 
 def parse_user(user, filename):
@@ -43,8 +43,8 @@ def get_template():
 
 
 def change_template(marker, template):
-    template[4] = f'          {marker.coords[0]},\n'
-    template[5] = f'          {marker.coords[1]}\n'
+    template[4] = f'          {marker.coords[1]},\n' # switch latlon to lonlat
+    template[5] = f'          {marker.coords[0]}\n'  # because of geojson
     template[10] = f'        "user": "{marker.user}",\n'
     if marker.color:
         template[12] = f'        "color": "{marker.color}"\n'

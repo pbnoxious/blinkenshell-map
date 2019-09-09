@@ -3,6 +3,7 @@
 import os
 
 class Marker:
+    """Stores the information of a user"""
     def __init__(self):
         self.user = None
         self.coords = [0.000,0.000]
@@ -11,6 +12,7 @@ class Marker:
 
 
 def check_coords(line):
+    """Check if coordinates were given in correct way"""
     coords = line.split(',') # must comma seperated
     if len(coords != 2):
         raise ValueError("Must be 2 values for coordinates")
@@ -21,10 +23,9 @@ def check_coords(line):
     return coords # switch lonlat to latlon to make it user friendly?
 
 
-def parse_user(user):
-    filepattern = "coordinates"
-    filename = "/home/" + user + "/public_html/" + filepattern
-
+def parse_user(user, filename):
+    # filepattern = "coordinates"
+    # filename = "/home/" + user + "/public_html/" + filepattern
     with open(filename, 'r') as f:
         lines = [line.strip() for line in f if line]
     marker = Marker()
@@ -41,31 +42,54 @@ def get_template():
     return lines
 
 
-if __name__ == '__main__':
-    users = os.listdir("/home/")
-    template = get_template()
-
-    for user in users:
-        try:
-            marker = parse_user(user)
-        except PermissionError:
-            print("Wrong permissions for user {}".format(user))
-        except IOError:
-            print("File of user {} not readable".format(user))
-        except ValueError:
-            pass
-        change_template(marker, template)
-
 def change_template(marker, template):
-    template[4] = '          {},\n'.format(marker.coords[0])
-    template[5] = '          {},\n'.format(marker.coords[1])
-    template[10] = '        "user": "{}",\n'.format(marker.user)
+    template[4] = f'          {marker.coords[0]},\n'
+    template[5] = f'          {marker.coords[0]},\n'
+    template[10] = f'        "user": "{marker.user}",\n'
     if marker.color:
-        template[12] = '        "color": "{}"\n'.format(marker.color)
+        template[12] = f'        "color": "{marker.color}"\n'
     else:
         del template[12]
     if marker.popup:
-        template[11] = '        "popupContent": "{}",\n'.format(marker.popup)
+        template[11] = f'        "popupContent": "{marker.popup}",\n'
     else:
         del template[11]
     return template
+
+
+if __name__ == '__main__':
+    # users = os.listdir("/home/")
+    users = ["pbnoxious"]
+
+    templateheader = ['var users = {\n',
+                      '  "type": "FeatureCollection",\n',
+                      '  "features": [\n',
+                      '    {\n'
+                      ]
+    templatefooter = ['  ]\n',
+                      '};'
+                      ]
+
+    template = get_template()
+
+    all_user_templates = []
+    all_user_templates.append(templateheader)
+
+    for user in users:
+        try:
+            marker = parse_user(user, "coordinates")
+        except PermissionError:
+            print(f"Wrong permissions for user {user}")
+        except IOError:
+            print(f"File of user {user} not readable")
+        except ValueError:
+            pass
+        change_template(marker, template)
+        all_user_templates.append(template)
+
+    all_user_templates.append(templatefooter)
+
+    with open('testmarkers', 'w') as f:
+        f.write(all_user_templates)
+
+    # later: use f.seek to only append the changed ones? how to search for the only changed ones?

@@ -6,7 +6,7 @@ A map to see where your fellow blinkenshellers are!
 
 Every blinkenshell user that has a "coordinates" file in their public_html will automatically be added to the map.
 A small python script parses these from time to time and converts them into GeoJSON markers.
-This GeoJSON layer is then added as a Leaflet layer to an OpenStreetMap based rendering done by Mapbox.
+These GeoJSON objects are then added as a Leaflet layer to an OpenStreetMap background with tiles from Mapbox.
 
 ## Structure of the coordinates file
 In principle just adding the Lat/Lon coordinates is sufficients, but there are additional options.

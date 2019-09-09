@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import urllib.request
 
 class Marker:
     """Stores the information of a user"""
@@ -14,7 +15,8 @@ class Marker:
 def check_coords(line):
     """Check if coordinates were given in correct way"""
     coords = line.split(',') # must comma seperated
-    if len(coords != 2):
+    coords = [float(coord) for coord in coords]
+    if len(coords) != 2:
         raise ValueError("Must be 2 values for coordinates")
     if abs(coords[0] > 180):
         raise ValueError("Longitude can't be larger than 180")
@@ -24,10 +26,10 @@ def check_coords(line):
 
 
 def parse_user(user, filename):
-    # filepattern = "coordinates"
-    # filename = "/home/" + user + "/public_html/" + filepattern
-    with open(filename, 'r') as f:
-        lines = [line.strip() for line in f if line]
+    urlpattern = "http://" + user + ".blinkenshell.org/" + filename
+    lines = []
+    with urllib.request.urlopen(urlpattern) as f:
+        lines = [line.decode().strip() for line in f.readlines()]
     marker = Marker()
     marker.user = user
     marker.coords = check_coords(lines[0])
@@ -44,7 +46,7 @@ def get_template():
 
 def change_template(marker, template):
     template[4] = f'          {marker.coords[0]},\n'
-    template[5] = f'          {marker.coords[0]},\n'
+    template[5] = f'          {marker.coords[1]}\n'
     template[10] = f'        "user": "{marker.user}",\n'
     if marker.color:
         template[12] = f'        "color": "{marker.color}"\n'
@@ -63,14 +65,16 @@ if __name__ == '__main__':
 
     templateheader = ['var users = {\n',
                       '  "type": "FeatureCollection",\n',
-                      '  "features": [\n',
-                      '    {\n'
+                      '  "features": [\n'
                       ]
     templatefooter = ['  ]\n',
                       '};'
                       ]
 
     template = get_template()
+
+    f = open('testmarkers', 'w')
+    f.writelines(templateheader)
 
     all_user_templates = []
     all_user_templates.append(templateheader)
@@ -85,11 +89,9 @@ if __name__ == '__main__':
         except ValueError:
             pass
         change_template(marker, template)
-        all_user_templates.append(template)
+        f.writelines(template)
 
-    all_user_templates.append(templatefooter)
-
-    with open('testmarkers', 'w') as f:
-        f.write(all_user_templates)
+    f.writelines(templatefooter)
+    f.close()
 
     # later: use f.seek to only append the changed ones? how to search for the only changed ones?

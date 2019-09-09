@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import urllib.request
 
 class Marker:
     """Stores the information of a user"""
@@ -27,9 +26,8 @@ def check_coords(line):
 
 def parse_user(user, filename):
     urlpattern = "http://" + user + ".blinkenshell.org/" + filename
-    lines = []
-    with urllib.request.urlopen(urlpattern) as f:
-        lines = [line.decode().strip() for line in f.readlines()]
+    lines = os.popen("curl -s http://pbnoxious.blinkenshell.org/coordinates").readlines()
+    lines = [line.strip() for line in lines if line]
     marker = Marker()
     marker.user = user
     marker.coords = check_coords(lines[0])

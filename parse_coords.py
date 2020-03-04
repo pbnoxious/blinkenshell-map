@@ -29,7 +29,7 @@ def parse_user(user, filename):
     """Reads file of user and returns Marker with info"""
     urlpattern = "http://" + user + ".blinkenshell.org/" + filename
     lines = os.popen(f"curl -s {urlpattern}").readlines()
-    if len(lines) == 7:
+    if len(lines) == 7 or len(lines) == 0:
         raise IOError
     lines = [line.strip() for line in lines if line]
     marker = Marker()
@@ -46,6 +46,16 @@ def get_template():
     with open("template.js", 'r') as f:
         lines = f.readlines()
     return lines
+
+
+#def read_old_markers(filename):
+#    with open(filename, 'r') as f:
+#        lines = f.readlines()
+#    lines = lines[3:-2] # remove template header and footer
+#    line_iter= iter(lines) 
+#    for line in line_iter:
+#        if line = f'"coordinates": ['
+#    marker = Marker()
 
 
 def change_template(marker, template):
@@ -68,8 +78,10 @@ def change_template(marker, template):
 
 
 if __name__ == '__main__':
-    # users = os.listdir("/home/")
-    users = ["pbnoxious", "failfailfail", "djm", "Nistur"]
+    markersfile = "markers-users.js"
+    logfile = "log_parse.txt"
+    users = os.listdir("/home/")
+    #users = ["pbnoxious", "djm", "Nistur", "luke", "derkirche", "esselfe", "peron", "period"]
 
     templateheader = ['var users = {\n',
                       '  "type": "FeatureCollection",\n',
@@ -81,13 +93,12 @@ if __name__ == '__main__':
 
     template = get_template()
 
-    log = open('log_parse.txt', 'w')
-    f = open('markers-users.js', 'w')
+    log = open(logfile, 'w')
+    f = open(markersfile, 'w')
     f.writelines(templateheader)
 
-    all_user_templates = []
-    all_user_templates.append(templateheader)
     user_json = copy.deepcopy(template)
+    user_counter = 0
 
     for user in users:
         try:
@@ -95,13 +106,15 @@ if __name__ == '__main__':
         except IOError:
             log.write(f"File of user {user} not found\n")
             continue
-        except ValueError:
-            log.write(f"File of user {user} is not correct\n")
+        except ValueError as e:
+            log.write(f"File of user {user} is not correct: {e}\n")
             continue
         user_json, fetch_new = change_template(marker, user_json)
         f.writelines(user_json)
+        user_counter += 1
         if fetch_new:
             user_json = copy.deepcopy(template)
+    log.write(f"\n{user_counter} blinkenshellers added to map successfully!\n")
 
     f.writelines(templatefooter)
     f.close()

@@ -1,6 +1,7 @@
 # blinkenshell-map
 
 A map to see where your fellow blinkenshellers are!
+
 The current URL is <http://pbnoxious.blinkenshell.org/map/map.html>
 
 ## How does it work?
@@ -13,7 +14,7 @@ These GeoJSON objects are then added as a Leaflet layer to an OpenStreetMap back
 In principle, just adding the Lat/Lon coordinates is sufficient but there are additional options.
 The file will be correctly parsed if it is structured as follows:
 ```
-lat.coordinates,lon.coordinates
+lat_coordinate,lon_coordinate
 (optional popup text)
 (optional color as #hex)
 ```

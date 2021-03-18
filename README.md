@@ -1,11 +1,12 @@
 # blinkenshell-map
 
 A map to see where your fellow blinkenshellers are!
+The current URL is <http://pbnoxious.blinkenshell.org/map/map.html>
 
 ## How does it work?
 
 Every blinkenshell user that has a "coordinates" file in their public_html will automatically be added to the map.
-A small python script parses these from time to time and converts them into GeoJSON markers.
+A small python script parses these from time to time (currently once per day) and converts them into GeoJSON markers.
 These GeoJSON objects are then added as a Leaflet layer to an OpenStreetMap background with tiles from Mapbox.
 
 ## Structure of the coordinates file

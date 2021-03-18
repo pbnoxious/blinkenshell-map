@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import datetime
 import os
 import copy
 
@@ -76,11 +77,18 @@ def change_template(marker, template):
 
 
 def main():
+    # define filenames
     directory = os.path.dirname(os.path.realpath(__file__))
     markersfile = os.path.join(directory, "markers-users.js")
     logfile = os.path.join(directory, "log_parse.txt")
     templatefile = os.path.join(directory, "template.js")
-    users = os.listdir("/home/")
+
+    log = open(logfile, 'w')
+    log.write(f"{datetime.datetime.now()}: started script\n")
+
+    log.write(f"Reading template\n")
+    with open(templatefile, 'r') as f:
+        template = f.readlines()
 
     templateheader = ['var users = {\n',
                       '  "type": "FeatureCollection",\n',
@@ -90,16 +98,15 @@ def main():
                       '};'
                       ]
 
-    with open(templatefile, 'r') as f:
-        template = f.readlines()
-
-    log = open(logfile, 'w')
+    log.write(f"Opening markers file and write header\n")
     f = open(markersfile, 'w')
     f.writelines(templateheader)
 
     user_json = copy.deepcopy(template)
     user_counter = 0
 
+    users = os.listdir("/home/")
+    log.write(f"Found {len(users)} blinkenshellers, starting to parse their files\n\n")
     for user in users:
         try:
             marker = parse_user(user, "coordinates")
@@ -118,6 +125,7 @@ def main():
 
     f.writelines(templatefooter)
     f.close()
+    log.write(f"{datetime.datetime.now()}: finished script\n")
     log.close()
 
 

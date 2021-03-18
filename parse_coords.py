@@ -75,7 +75,7 @@ def change_template(marker, template):
     return (template, fetch_new)
 
 
-if __name__ == '__main__':
+def main():
     directory = os.path.dirname(os.path.realpath(__file__))
     markersfile = os.path.join(directory, "markers-users.js")
     logfile = os.path.join(directory, "log_parse.txt")
@@ -119,3 +119,7 @@ if __name__ == '__main__':
     f.writelines(templatefooter)
     f.close()
     log.close()
+
+
+if __name__ == '__main__':
+    main()

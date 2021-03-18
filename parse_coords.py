@@ -98,7 +98,7 @@ def main():
                       '};'
                       ]
 
-    log.write(f"Opening markers file and write header\n")
+    log.write(f"Opening markers file and writing header\n")
     f = open(markersfile, 'w')
     f.writelines(templateheader)
 

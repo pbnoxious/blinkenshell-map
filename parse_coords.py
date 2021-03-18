@@ -46,12 +46,6 @@ def parse_user(user, filename):
     return marker
 
 
-def get_template():
-    with open("template.js", 'r') as f:
-        lines = f.readlines()
-    return lines
-
-
 #def read_old_markers(filename):
 #    with open(filename, 'r') as f:
 #        lines = f.readlines()
@@ -85,6 +79,7 @@ if __name__ == '__main__':
     directory = os.path.dirname(os.path.realpath(__file__))
     markersfile = os.path.join(directory, "markers-users.js")
     logfile = os.path.join(directory, "log_parse.txt")
+    templatefile = os.path.join(directory, "template.js")
     users = os.listdir("/home/")
 
     templateheader = ['var users = {\n',
@@ -95,7 +90,8 @@ if __name__ == '__main__':
                       '};'
                       ]
 
-    template = get_template()
+    with open(templatefile, 'r') as f:
+        template = f.readlines()
 
     log = open(logfile, 'w')
     f = open(markersfile, 'w')

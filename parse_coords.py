@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import datetime
-import os
 import copy
+import datetime
+import requests
+import os
 
 class Marker:
     """Stores the information of a user"""
@@ -28,15 +29,14 @@ def check_coords(line):
 
 def parse_user(user, filename):
     """Reads file of user and returns Marker with info"""
-    urls = ["http://" + user + ".blinkenshell.org/" + filename,
-            "https://" + user + ".u.blinkenshell.org/" + filename]
-    for url in urls:
-        lines = os.popen(f"curl -s {url}").readlines()
-        if len(lines) != 7 and len(lines) != 0:  # received something
-            break
-    if len(lines) == 7 or len(lines) == 0:  # raise error if none
+    url = "http://" + user + ".blinkenshell.org/" + filename
+           # new scheme but should be redirected to from the old
+           #"https://" + user + ".u.blinkenshell.org/" + filename
+    data = requests.get(url)
+    if data.status_code != 200:  # not successful
         raise IOError
-    lines = [line.strip() for line in lines if line]
+    lines = data.text.split('\n')
+    lines = [line.strip() for line in lines]
     marker = Marker()
     marker.user = user
     marker.coords = check_coords(lines[0])

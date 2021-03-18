@@ -82,10 +82,10 @@ def change_template(marker, template):
 
 
 if __name__ == '__main__':
-    markersfile = "markers-users.js"
-    logfile = "log_parse.txt"
+    directory = os.path.dirname(os.path.realpath(__file__))
+    markersfile = os.path.join(directory, "markers-users.js")
+    logfile = os.path.join(directory, "log_parse.txt")
     users = os.listdir("/home/")
-    #users = ["pbnoxious", "djm", "Nistur", "luke", "derkirche", "esselfe", "peron", "period"]
 
     templateheader = ['var users = {\n',
                       '  "type": "FeatureCollection",\n',

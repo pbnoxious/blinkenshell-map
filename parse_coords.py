@@ -27,9 +27,13 @@ def check_coords(line):
 
 def parse_user(user, filename):
     """Reads file of user and returns Marker with info"""
-    urlpattern = "http://" + user + ".blinkenshell.org/" + filename
-    lines = os.popen(f"curl -s {urlpattern}").readlines()
-    if len(lines) == 7 or len(lines) == 0:
+    urls = ["http://" + user + ".blinkenshell.org/" + filename,
+            "https://" + user + ".u.blinkenshell.org/" + filename]
+    for url in urls:
+        lines = os.popen(f"curl -s {url}").readlines()
+        if len(lines) != 7 and len(lines) != 0:  # received something
+            break
+    if len(lines) == 7 or len(lines) == 0:  # raise error if none
         raise IOError
     lines = [line.strip() for line in lines if line]
     marker = Marker()

@@ -26,16 +26,31 @@ def check_coords(line):
         raise ValueError("Longitude can't be larger than 180")
     return coords
 
+def read_file(url):
+    """Get file with all user coordinates and split it into users
 
-def parse_user(user, filename):
-    """Reads file of user and returns Marker with info"""
-    url = "http://" + user + ".blinkenshell.org/" + filename
-           # new scheme but should be redirected to from the old
-           #"https://" + user + ".u.blinkenshell.org/" + filename
+    Returns dict with
+
+        dict[username] = string containing coordinate file
+
+    pairs
+    """
     data = requests.get(url)
     if data.status_code != 200:  # not successful
         raise IOError
-    lines = data.text.split('\n')
+    userdict = {}  # dict that has the multiline string as value for every user
+    for section in data.text.split('==>')[1:]:  # split into one file per user, first is empty
+        header, text = section.split('\n', 1)  # first line is header
+        username = header.split('/')[2]  #  /home/username/public_html/coordinates
+        userdict[username] = text
+    return userdict
+
+def parse_user(user, text):
+    """Create Marker object from coordinates file of the user
+
+    The text should be a single string with newlines
+    """
+    lines = text.split('\n')
     lines = [line.strip() for line in lines]
     marker = Marker()
     marker.user = user
@@ -45,16 +60,6 @@ def parse_user(user, filename):
     if len(lines) >= 2:
         marker.popup = lines[1]
     return marker
-
-
-#def read_old_markers(filename):
-#    with open(filename, 'r') as f:
-#        lines = f.readlines()
-#    lines = lines[3:-2] # remove template header and footer
-#    line_iter= iter(lines) 
-#    for line in line_iter:
-#        if line = f'"coordinates": ['
-#    marker = Marker()
 
 
 def change_template(marker, template):
@@ -82,11 +87,12 @@ def main():
     markersfile = os.path.join(directory, "markers-users.js")
     logfile = os.path.join(directory, "log_parse.txt")
     templatefile = os.path.join(directory, "template.js")
+    coordfile="https://blinkenshell.org/mapdata.txt"
 
     log = open(logfile, 'w')
     log.write(f"{datetime.datetime.now()}: started script\n")
 
-    log.write(f"Reading template\n")
+    log.write("Reading template\n")
     with open(templatefile, 'r') as f:
         template = f.readlines()
 
@@ -98,21 +104,18 @@ def main():
                       '};'
                       ]
 
-    log.write(f"Opening markers file and writing header\n")
+    log.write("Opening markers file and writing header\n")
     f = open(markersfile, 'w')
     f.writelines(templateheader)
 
     user_json = copy.deepcopy(template)
     user_counter = 0
 
-    users = os.listdir("/home/")
-    log.write(f"Found {len(users)} blinkenshellers, starting to parse their files\n\n")
-    for user in users:
+    userdict = read_file(coordfile)
+    log.write(f"Found {len(userdict)} blinkenshellers in file, starting to parse their texts\n\n")
+    for user, text in userdict.items():
         try:
-            marker = parse_user(user, "coordinates")
-        except IOError:
-            log.write(f"File of user {user} not found\n")
-            continue
+            marker = parse_user(user, text)
         except ValueError as e:
             log.write(f"File of user {user} is not correct: {e}\n")
             continue
